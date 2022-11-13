@@ -7,12 +7,28 @@ import { useRouter } from 'next/router'
 import { prisma } from '../../server/db/client'
 import CommentForm from '../../components/CommentForm'
 import { useSession, signIn, signOut } from 'next-auth/react'
+import {useState, useEffect} from 'react'
 
 export default function Code({ post, likes }) {
   const router = useRouter()
   let jsx
   const { data: session } = useSession()
 
+  const [comments, setComments] = useState([])
+  const [liked, setLike] = useState('')
+  const [err, serErr] = useState([])
+
+  useEffect(()=> {
+    axios
+    .get(`../api/comments/${post.id}`)
+    .then((res) => {
+      setComments(res.data)
+    })
+    .catch((err) => {
+      console.log(err)
+      setErr(err)
+    })
+}, [])
   if (session) {
     likes.forEach((like) => {
       if (like.user.email === session.user.email) {
@@ -42,15 +58,15 @@ export default function Code({ post, likes }) {
     axios.put('../api/posts', { id: postId }).then(()=> window.location.reload())
 
   }
-  const fetcher = (url) => axios.get(url).then((res) => res.data)
-  const { data, error } = useSWR(`../api/comments/${post.id}`, fetcher)
+  // const fetcher = (url) => axios.get(url).then((res) => res.data)
+  // const { data, error } = useSWR(`../api/comments/${post.id}`, fetcher)
 
-  if (error) return <div>{error}</div>
-  if (!data) return <div> loading...</div>
+  // if (err) return <div>{err}</div>
+  // if (!comments) return <div> loading...</div>
 
-  if (router.isFallback) {
-    return <h2> loading...</h2>
-  }
+  // if (router.isFallback) {
+  //   return <h2> loading...</h2>
+  // }
 
   return (
     <>
@@ -67,7 +83,7 @@ export default function Code({ post, likes }) {
             onShare={() => console.log('share')}
           />
           {jsx}
-          <Comments comments={data} className=""></Comments>
+          <Comments comments={comments} className=""></Comments>
         </div>
       </div>
     </>
@@ -101,7 +117,7 @@ export async function getStaticProps(context) {
         post: JSON.parse(JSON.stringify(returnedPost)),
         likes: JSON.parse(JSON.stringify(likes)),
       },
-      revalidate: 10
+      revalidate: 5
     }
   }
 }

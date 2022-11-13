@@ -11,7 +11,7 @@ export default function Home() {
 const [posts, setPosts] = useState([])
 const [err, setErr] =useState(null)
 
-const [liked, setLiked] = useState(false)
+const [liked, setLiked] = useState("")
   useEffect(()=> {
     axios
     .get('/api/posts')
@@ -34,8 +34,8 @@ const [liked, setLiked] = useState(false)
       router.push("/api/auth/signin")
       return;
     }
-    setLiked(postId)
     axios.put("api/posts", {id: postId})
+    setLiked(postId)
   } 
 
   if (err) return <div>failed to load</div>
