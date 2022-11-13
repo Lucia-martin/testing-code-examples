@@ -8,24 +8,24 @@ import {useState, useEffect} from 'react'
 
 export default function Home() {
   const router = useRouter()
-const [posts, setPosts] = useState([])
-const [err, setErr] =useState(null)
+// const [posts, setPosts] = useState([])
+// const [err, setErr] =useState(null)
 
-const [liked, setLiked] = useState("")
-  useEffect(()=> {
-    axios
-    .get('/api/posts')
-    .then((res) => {
-      setPosts(res.data)
-    })
-    .catch((err) => {
-      console.log(err)
-      setErr(err)
-    })
-}, [liked])
+// const [liked, setLiked] = useState("")
+//   useEffect(()=> {
+//     axios
+//     .get('/api/posts')
+//     .then((res) => {
+//       setPosts(res.data)
+//     })
+//     .catch((err) => {
+//       console.log(err)
+//       setErr(err)
+//     })
+// }, [liked])
   
-  // const fetcher = (url) => axios.get(url).then((res) => res.data)
-  // const { data, error } = useSWR('api/posts', fetcher)
+  const fetcher = (url) => axios.get(url).then((res) => res.data)
+  const { data, error } = useSWR('api/posts', fetcher)
  
   const { data: session } = useSession()
   
@@ -34,12 +34,12 @@ const [liked, setLiked] = useState("")
       router.push("/api/auth/signin")
       return;
     }
-    axios.put("api/posts", {id: postId})
-    setLiked(postId)
+    axios.put("api/posts", {id: postId}).then(()=>window.location.reload())
+    // setLiked(postId)
   } 
 
-  if (err) return <div>failed to load</div>
-  if (!posts) return <div> loading...</div>
+  if (error) return <div>failed to load</div>
+  if (!data) return <div> loading...</div>
 
   return (
     <div className="pt-8 pb-10 lg:pt-12 lg:pb-14 mx-auto max-w-7xl px-2">
@@ -51,7 +51,7 @@ const [liked, setLiked] = useState("")
         <Button onClick={() => router.push('/addPost')}>Create a Post</Button>
 
         <ul className="mt-8">
-          {posts?.map((post) => (
+          {data?.map((post) => (
             <li key={post.id}>
               <PostSmall
                 user={post.user}
