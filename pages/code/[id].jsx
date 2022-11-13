@@ -40,7 +40,9 @@ export default function Code({ post, likes }) {
       router.push('/api/auth/signin')
       return
     }
-    axios.put('../api/posts', { id: postId }).then(()=> window.location.reload())
+    axios.put('../api/posts', { id: postId }).then(()=> setInterval(() => {
+      window.location.reload()
+    }, 300) )
 
   }
   const fetcher = (url) => axios.get(url).then((res) => res.data)
