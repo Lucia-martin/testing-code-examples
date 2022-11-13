@@ -29,12 +29,12 @@ const [liked, setLiked] = useState(false)
  
   const { data: session } = useSession()
   
-  function handleLike(postId) {
+  async function handleLike(postId) {
     if(!session) {
       router.push("/api/auth/signin")
       return;
     }
-    axios.put("api/posts", {id: postId})
+    await axios.put("api/posts", {id: postId})
     setLiked(postId)
   } 
 
