@@ -25,8 +25,7 @@ export default function Code({ post, likes }) {
   }
 
   async function handleSubmit(comment) {
-    await axios.post(`../api/comments/${post.id}`, { ...comment, session })
-    window.location.reload()
+    await axios.post(`../api/comments/${post.id}`, { ...comment, session }).then(()=>window.location.reload())
   }
 
   function redirect() {
@@ -40,8 +39,8 @@ export default function Code({ post, likes }) {
       router.push('/api/auth/signin')
       return
     }
-    await axios.put('../api/posts', { id: postId })
-    window.location.reload()
+    await axios.put('../api/posts', { id: postId }).then(()=> window.location.reload())
+
   }
   const fetcher = (url) => axios.get(url).then((res) => res.data)
   const { data, error } = useSWR(`../api/comments/${post.id}`, fetcher)
