@@ -102,6 +102,7 @@ export async function getStaticProps(context) {
         post: JSON.parse(JSON.stringify(returnedPost)),
         likes: JSON.parse(JSON.stringify(likes)),
       },
+      revalidate: 10
     }
   }
 }
