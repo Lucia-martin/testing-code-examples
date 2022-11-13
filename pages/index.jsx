@@ -34,7 +34,8 @@ const [liked, setLiked] = useState(false)
       router.push("/api/auth/signin")
       return;
     }
-    axios.put("api/posts", {id: postId}).then(()=> setLiked(postId))
+    axios.put("api/posts", {id: postId})
+    setLiked(postId)
   } 
 
   if (err) return <div>failed to load</div>
