@@ -24,7 +24,7 @@ export default function Code({ post, likes }) {
     )
   }
 
-  async function handleSubmit(comment) {
+   function handleSubmit(comment) {
    axios.post(`../api/comments/${post.id}`, { ...comment, session }).then(()=>window.location.reload())
   }
 
@@ -34,7 +34,7 @@ export default function Code({ post, likes }) {
     }
   }
 
-  async function handleLike(postId) {
+  function handleLike(postId) {
     if (!session) {
       router.push('/api/auth/signin')
       return
