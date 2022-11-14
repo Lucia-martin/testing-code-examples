@@ -45,6 +45,7 @@ export default function Code({ post, likes }) {
     }
     axios
       .put('../api/posts', { id: postId })
+      .then(() => window.location.reload())
   }
   const fetcher = (url) => axios.get(url).then((res) => res.data)
   const { data, err } = useSWR(`../api/comments/${post.id}`, fetcher)
