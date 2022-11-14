@@ -45,7 +45,7 @@ export default function Code({ post, likes }) {
     }
     axios
       .put('../api/posts', { id: postId })
-      .then(() => window.location.reload())
+      // .then(() => window.location.reload())
   }
   const fetcher = (url) => axios.get(url).then((res) => res.data)
   const { data, err } = useSWR(`../api/comments/${post.id}`, fetcher)
@@ -69,6 +69,7 @@ export default function Code({ post, likes }) {
 
   return (
     <>
+    {window.location.reload}
       <div className="pt-8 pb-10 lg:pt-12 lg:pb-14 mx-auto max-w-7xl px-2">
         <div className="max-w-2xl mx-auto">
           <Post
