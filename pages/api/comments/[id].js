@@ -14,8 +14,26 @@ export default async function handler(req, res) {
           user: true,
         },
       })
+
+      const returnedPost = await prisma.post.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          user: true,
+        },
+      })
+
+      const likes = await prisma.like.findMany({
+        where: {
+          postId: id,
+        },
+        include: {
+          user: true,
+        },
+      })
      
-      res.status(200).json(comments)
+      res.status(200).json({comments, returnedPost, likes})
       break
     case 'POST':
      
@@ -24,7 +42,7 @@ export default async function handler(req, res) {
       const prismaUser = await prisma.user.findUnique({
         where: { email: session.user.email },
       })
-      
+
     const comm = await prisma.comment.create({
       data: {
         content: comment,

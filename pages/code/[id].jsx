@@ -7,11 +7,11 @@ import { useRouter } from 'next/router'
 import { prisma } from '../../server/db/client'
 import CommentForm from '../../components/CommentForm'
 import { useSession, signIn, signOut } from 'next-auth/react'
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Code({ post, likes }) {
   const router = useRouter()
-  let jsx;
+  let jsx
   const { data: session } = useSession()
 
   if (session) {
@@ -19,15 +19,17 @@ export default function Code({ post, likes }) {
       if (like.user.email === session.user.email) {
         post = { ...post, liked: true }
       }
-      return;
+      return
     })
     jsx = (
       <CommentForm onSubmit={handleSubmit} user={session.user}></CommentForm>
     )
   }
 
-   function handleSubmit(comment) {
-   axios.post(`../api/comments/${post.id}`, { ...comment, session }).then(()=>window.location.reload())
+  function handleSubmit(comment) {
+    axios
+      .post(`../api/comments/${post.id}`, { ...comment, session })
+      .then(() => window.location.reload())
   }
 
   function redirect() {
@@ -41,11 +43,13 @@ export default function Code({ post, likes }) {
       router.push('/api/auth/signin')
       return
     }
-    axios.put('../api/posts', { id: postId })
+    axios
+      .put('../api/posts', { id: postId })
   }
   const fetcher = (url) => axios.get(url).then((res) => res.data)
   const { data, err } = useSWR(`../api/comments/${post.id}`, fetcher)
 
+  console.log(data)
   if (err) return <div>{err}</div>
   if (!data) return <div> loading...</div>
 
@@ -53,22 +57,31 @@ export default function Code({ post, likes }) {
     return <h2> loading...</h2>
   }
 
+  if (session) {
+    data.likes.forEach((like) => {
+      if (like.user.email === session.user.email) {
+        data.returnedPost = { ...data.returnedPost, liked: true }
+      }
+      return
+    })
+  }
+
   return (
     <>
       <div className="pt-8 pb-10 lg:pt-12 lg:pb-14 mx-auto max-w-7xl px-2">
         <div className="max-w-2xl mx-auto">
           <Post
-            user={post.user}
-            post={post}
+            user={data.returnedPost.user}
+            post={data.returnedPost}
             className="px-6 my-3 mt-10"
             smallMaxWith={'max-w-2xl'}
             largeMaxWith={'max-w-7xl'}
             onComment={() => redirect()}
-            onLike={() => handleLike(post.id)}
+            onLike={() => handleLike(data.returnedPost.id)}
             onShare={() => console.log('share')}
           />
           {jsx}
-          <Comments comments={data} className=""></Comments>
+          <Comments comments={data.comments} className=""></Comments>
         </div>
       </div>
     </>
@@ -102,7 +115,7 @@ export async function getStaticProps(context) {
         post: JSON.parse(JSON.stringify(returnedPost)),
         likes: JSON.parse(JSON.stringify(likes)),
       },
-      revalidate: 2
+      revalidate: 2,
     }
   }
 }
@@ -117,6 +130,6 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: "blocking",
+    fallback: 'blocking',
   }
 }
