@@ -9,7 +9,6 @@ import {useState, useEffect} from 'react'
 export default function Home() {
   const router = useRouter()
 const [posts, setPosts] = useState([])
-const [err, setErr] =useState(null)
 
 const [liked, setLiked] = useState("")
   useEffect(()=> {
