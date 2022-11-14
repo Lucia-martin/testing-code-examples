@@ -8,21 +8,20 @@ import {useState, useEffect} from 'react'
 
 export default function Home() {
   const router = useRouter()
-// const [posts, setPosts] = useState([])
-// const [err, setErr] =useState(null)
+const [posts, setPosts] = useState([])
+const [err, setErr] =useState(null)
 
-// const [liked, setLiked] = useState("")
-//   useEffect(()=> {
-//     axios
-//     .get('/api/posts')
-//     .then((res) => {
-//       setPosts(res.data)
-//     })
-//     .catch((err) => {
-//       console.log(err)
-//       setErr(err)
-//     })
-// }, [liked])
+const [liked, setLiked] = useState("")
+  useEffect(()=> {
+    axios
+    .get('/api/posts')
+    .then((res) => {
+      setPosts(res.data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}, [liked])
   
   const fetcher = (url) => axios.get(url).then((res) => res.data)
   const { data, error } = useSWR('api/posts', fetcher)
@@ -34,8 +33,8 @@ export default function Home() {
       router.push("/api/auth/signin")
       return;
     }
-    axios.put("api/posts", {id: postId}).then(()=>window.location.reload())
-    // setLiked(postId)
+    axios.put("api/posts", {id: postId})
+    setLiked(postId)
   } 
 
   if (error) return <div>failed to load</div>
@@ -51,7 +50,7 @@ export default function Home() {
         <Button onClick={() => router.push('/addPost')}>Create a Post</Button>
 
         <ul className="mt-8">
-          {data?.map((post) => (
+          {posts?.map((post) => (
             <li key={post.id}>
               <PostSmall
                 user={post.user}

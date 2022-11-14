@@ -11,7 +11,7 @@ import {useState, useEffect} from 'react'
 
 export default function Code({ post, likes }) {
   const router = useRouter()
-  let jsx
+  let jsx;
   const { data: session } = useSession()
 
   if (session) {
@@ -19,6 +19,7 @@ export default function Code({ post, likes }) {
       if (like.user.email === session.user.email) {
         post = { ...post, liked: true }
       }
+      return;
     })
     jsx = (
       <CommentForm onSubmit={handleSubmit} user={session.user}></CommentForm>
@@ -40,10 +41,7 @@ export default function Code({ post, likes }) {
       router.push('/api/auth/signin')
       return
     }
-    axios.put('../api/posts', { id: postId }).then(()=> setInterval(() => {
-      window.location.reload()
-    }, 300) )
-
+    axios.put('../api/posts', { id: postId })
   }
   const fetcher = (url) => axios.get(url).then((res) => res.data)
   const { data, err } = useSWR(`../api/comments/${post.id}`, fetcher)
